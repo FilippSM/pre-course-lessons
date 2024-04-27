@@ -1,9 +1,6 @@
 import {GameGrid} from "./components/GameGrid/game-grid.component.js"
+import {ResultPanel} from "./components/ResultPanel/result-panel.component.js"
 
 const rootElement = document.getElementById("root");
 
-
-const resultPanelElement = ResultPanel();
-const gameGridElement = GameGrid();
-
-rootElement.append(gameGridElement);
+rootElement.append(ResultPanel(), GameGrid());
