@@ -1,10 +1,23 @@
+
+/**
+ * State mashine (конечная машина)
+ */
+export const GAME_STATES = {
+    SETTINGS: "settings",
+    IN_PROGRESS: "in_progress",
+    WIN: "win",
+    LOSE: "lose"
+}
+
 const _data = {
+    gameState: GAME_STATES.SETTINGS,
     settings: {
         gridSize: {
             x: 4,
             y: 4
         },
-        pointsToWin: 5
+        pointsToWin: 5,
+        pointsToLose: 5
     },
     catch: 0,
     miss: 0,
@@ -51,6 +64,11 @@ function runGoogleJump() {
     jumpIntervalId = setInterval(() => {
         changeGoogleCoords(); // изменение координат
         _data.miss++;
+        //состояние state mashine при проигрыше
+        if(_data.miss === _data.settings.pointsToLose) {
+            stopGoogleJump();
+            _data.gameState = GAME_STATES.LOSE;    
+        }
         observer(); //когда поменял позицию вызываем гугл
     }, 3000);    
 }
@@ -71,7 +89,16 @@ export function setGridSize(x, y){
 }
 
 export function start() {
+    _data.gameState = GAME_STATES.IN_PROGRESS;
     runGoogleJump();
+    observer();
+}
+
+export function playAgain() {
+    _data.miss = 0;
+    _data.catch = 0;
+    _data.gameState = GAME_STATES.SETTINGS;
+    observer();
 }
 
 /**
@@ -84,13 +111,13 @@ export function catchGoogle() {
     //при _data.catch ===pointsToWin будет остановка
 
     if (_data.catch === _data.settings.pointsToWin) {
-        return
+        return;
     }
 
     _data.catch++;
 
     if (_data.catch === _data.settings.pointsToWin) {
-
+        _data.gameState = GAME_STATES.WIN;
     } else {
         changeGoogleCoords()
         runGoogleJump();
@@ -130,3 +157,8 @@ export function getGridSizeSettings() {
         ..._data.settings.gridSize
     }
 }
+
+export function getGameState() {
+    return _data.gameState;
+}
+
