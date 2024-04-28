@@ -3,9 +3,11 @@ const _data = {
         gridSize: {
             x: 4,
             y: 4
-        }
+        },
+        pointsToWin: 5
     },
     catch: 0,
+    miss: 0,
     time: new Date(),
     heroes: {
         google: {
@@ -38,6 +40,22 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * (max + 1));
 } 
 
+let jumpIntervalId;
+
+//остановка интервала перед перезапуском
+function stopGoogleJump() {
+    clearInterval(jumpIntervalId); 
+}
+
+function runGoogleJump() {
+    jumpIntervalId = setInterval(() => {
+        changeGoogleCoords(); // изменение координат
+        _data.miss++;
+        observer(); //когда поменял позицию вызываем гугл
+    }, 3000);    
+}
+
+
 //setter/muration/command
 //сеттер - ввод данных пользователем с предварительной проверкой
 
@@ -53,18 +71,30 @@ export function setGridSize(x, y){
 }
 
 export function start() {
-    setInterval(() => {
-        changeGoogleCoords(); // изменение координат
-        observer(); //когда поменял позицию вызываем гугл
-    }, 3000);
+    runGoogleJump();
 }
 
 /**
  * счетчик пойманных кликов по гуглу
  */
 export function catchGoogle() {
+    stopGoogleJump();
+
+    //защита от дурака на повторный клик (более кол-ва очков: pointsToWin)
+    //при _data.catch ===pointsToWin будет остановка
+
+    if (_data.catch === _data.settings.pointsToWin) {
+        return
+    }
+
     _data.catch++;
-    changeGoogleCoords()
+
+    if (_data.catch === _data.settings.pointsToWin) {
+
+    } else {
+        changeGoogleCoords()
+        runGoogleJump();
+    }
 
     observer(); //когда поменял позицию вызываем гугл
 }
@@ -77,6 +107,9 @@ export function catchGoogle() {
  */
 export function getCatchCount() {
     return _data.catch;
+}
+export function getMissCount() {
+    return _data.miss;
 }
 
 //вместо передачи объекта, передавать копию
