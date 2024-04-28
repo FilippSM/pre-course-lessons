@@ -24,12 +24,27 @@ const _data = {
 
 let observer = () => {};
 
-//setter
+function changeGoogleCoords() {
+    _data.heroes.google.x = getRandomInt(_data.settings.gridSize.x - 1);
+    _data.heroes.google.y = getRandomInt(_data.settings.gridSize.y - 1);
+}
+
+/**
+ * 
+ * @param max любое целое положительное число, от 0 (включая) до этого числа включая
+ * @returns 
+ */
+function getRandomInt(max) {
+    return Math.floor(Math.random() * (max + 1));
+} 
+
+//setter/muration/command
+//сеттер - ввод данных пользователем с предварительной проверкой
+
 export function addEventListener(subscriber) {
     observer = subscriber;
 }
 
-//сеттер - ввод данных пользователем с предварительной проверкой
 export function setGridSize(x, y){
     if (x < 1) throw new Error("incorrect X grid size settings");
     if (y < 1) throw new Error("incorrect Y grid size settings");
@@ -38,22 +53,33 @@ export function setGridSize(x, y){
 }
 
 export function start() {
-    setInterval(changeGoogleCoords, 1000);
+    setInterval(() => {
+        changeGoogleCoords(); // изменение координат
+        observer(); //когда поменял позицию вызываем гугл
+    }, 3000);
 }
 
-function changeGoogleCoords() {
-    _data.heroes.google.x = Math.floor(Math.random() * (3 + 1));
-    _data.heroes.google.y = Math.floor(Math.random() * (3 + 1));
-    
-    //когда поменял позицию вызываем гугл
-    observer();
+/**
+ * счетчик пойманных кликов по гуглу
+ */
+export function catchGoogle() {
+    _data.catch++;
+    changeGoogleCoords()
+
+    observer(); //когда поменял позицию вызываем гугл
 }
 
+//getter/selector/query/adapter
 
+/**
+ * 
+ * @returns кол-во баллов, заработанных пользователем
+ */
 export function getCatchCount() {
     return _data.catch;
 }
 
+//вместо передачи объекта, передавать копию
 /* export function getGoogleCoords() {
     return _data.heroes.google;
 }

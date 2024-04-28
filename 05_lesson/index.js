@@ -16,13 +16,8 @@ export function rerender() {
 rerender()
 start();
 
-/* addEventListener(() => {
-    console.log("Data changed");
-}) */
-
 //каждый раз когда что-то меняется происходит ререндер
-addEventListener(rerender)
+addEventListener(rerender);
 
-document.addEventListener("click", () => {
-    console.log("Clicked");
-})
+
+
