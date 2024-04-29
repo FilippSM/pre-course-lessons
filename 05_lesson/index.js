@@ -29,7 +29,7 @@ export function rerender() {
     }
 }
 rerender()
-start();
+//start();
 
 //каждый раз когда что-то меняется происходит ререндер
 addEventListener(rerender);

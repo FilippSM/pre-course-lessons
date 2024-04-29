@@ -67,7 +67,7 @@ function runGoogleJump() {
         //состояние state mashine при проигрыше
         if(_data.miss === _data.settings.pointsToLose) {
             stopGoogleJump();
-            _data.gameState = GAME_STATES.LOSE;    
+            _data.gameState = GAME_STATES.LOSE;
         }
         observer(); //когда поменял позицию вызываем гугл
     }, 3000);    
