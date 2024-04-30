@@ -1,8 +1,10 @@
 import { GameGrid } from "./components/GameGrid/game-grid.component.js"
+import { Lose } from "./components/Lose/lose.component.js";
 import { ResultPanel } from "./components/ResultPanel/result-panel.component.js"
 import { Settings } from "./components/Settings/settings.component.js";
 import { Win } from "./components/Win/win.component.js";
 import { addEventListener, start, getGameState, GAME_STATES } from "./data.js";
+
 
 
 //надо ререндериться всякий раз когда поменялись данные
@@ -22,6 +24,9 @@ export function rerender() {
             break;
         case GAME_STATES.WIN:
             rootElement.append(Win());
+            break;
+        case GAME_STATES.LOSE:
+            rootElement.append(Lose());
             break;
         default: {
             throw new Error("Not supported state")
