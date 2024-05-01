@@ -3,7 +3,7 @@ import { Lose } from "./components/Lose/lose.component.js";
 import { ResultPanel } from "./components/ResultPanel/result-panel.component.js"
 import { Settings } from "./components/Settings/settings.component.js";
 import { Win } from "./components/Win/win.component.js";
-import { addEventListener, start, getGameState, GAME_STATES } from "./data.js";
+import { addEventListener, getGameState, GAME_STATES } from "./data.js";
 
 
 
@@ -34,7 +34,7 @@ export function rerender() {
     }
 }
 rerender()
-//start();
+
 
 //каждый раз когда что-то меняется происходит ререндер
 addEventListener(rerender);

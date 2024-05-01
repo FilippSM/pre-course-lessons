@@ -17,7 +17,7 @@ const _data = {
             y: 4
         },
         pointsToWin: 5,
-        pointsToLose: 5
+        pointsToLose: 20
     },
     catch: 0,
     miss: 0,
@@ -40,17 +40,34 @@ const _data = {
 let observer = () => {};
 
 function changeGoogleCoords() {
-    _data.heroes.google.x = getRandomInt(_data.settings.gridSize.x - 1);
-    _data.heroes.google.y = getRandomInt(_data.settings.gridSize.y - 1);
+    let randomObject = getRandomInt(_data.settings.gridSize.x - 1);
+ 
+    _data.heroes.google.x = randomObject.x;
+    _data.heroes.google.y = randomObject.y;
+
+    console.log(_data.heroes.google.x);
+    console.log(_data.heroes.google.y);
 }
 
 /**
  * 
- * @param max любое целое положительное число, от 0 (включая) до этого числа включая
+ * @param max любое целое положительное число, от 0 (включая) до этого числа включая,
+ * каждая новая пара чисел при генерации отличаласется от предыдущей
  * @returns 
  */
+let previousPair = { x: null, y: null };
+
 function getRandomInt(max) {
-    return Math.floor(Math.random() * (max + 1));
+    let x, y;
+
+    do {
+        x = Math.floor(Math.random() * (max + 1));
+        y = Math.floor(Math.random() * (max + 1));
+    } while (x === previousPair.x && y === previousPair.y);
+
+    previousPair = { x: x, y: y };
+
+    return { x: x, y: y };
 } 
 
 let jumpIntervalId;
