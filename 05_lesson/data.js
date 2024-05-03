@@ -9,6 +9,26 @@ export const GAME_STATES = {
     LOSE: "lose"
 }
 
+export const dataUser = {
+    gridSize: {
+        size4: { 
+            x: 4, 
+            y: 4
+        }, 
+        size6: { 
+            x: 6, 
+            y: 6
+        }, 
+        size8: { 
+            x: 8, 
+            y: 8
+        }, 
+    },
+    pointsToWin: 5,
+    pointsToLose: 20
+}
+
+
 const _data = {
     gameState: GAME_STATES.SETTINGS,
     settings: {
