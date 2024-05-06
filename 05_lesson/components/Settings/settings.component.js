@@ -1,89 +1,90 @@
-import { dataUser, setGridSize, start } from "../../data.js";
+import { dataUser, setGridSize, setMaxMisses, setPointsToWin, start } from "../../data.js";
 
 export function Settings() {
+    const elementRoot = document.getElementById("root");
     const element = document.createElement("div");
-    
+    elementRoot.append(element);
+
+
     const startButton = document.createElement("button");
     startButton.append("Start");
 
     startButton.addEventListener("click", () => {
-        start();    
+        start();
     })
 
     element.append(startButton);
 
     const gridSizeSelect = document.createElement("select");
-    gridSizeSelect.append("Grid Size");
+    gridSizeSelect.id = 'gridSizeSelect'
 
 
-    let x;
-    let y;
-
-    //перебор ассоциативного массива
+    //перебор ассоциативного массива, размер сетки
     for (var key in dataUser.gridSize) {
         const option = document.createElement('option');
         option.value = key;
-        option.text = key;
+        option.text = `${dataUser.gridSize[key].x} x ${dataUser.gridSize[key].y}`;
 
-        x = dataUser.gridSize[key].x
-        y = dataUser.gridSize[key].y
-        console.log(x);
-        console.log(y); 
         gridSizeSelect.append(option);
     };
 
 
     element.append(gridSizeSelect);
-    const selectGridSize = document.querySelector("select");
-    console.log(selectGridSize.value);
+    const selectGridSize = document.querySelector("#gridSizeSelect");
+
+ /*    let x;
+    let y;
 
 
-   /*  gridSizeSelect.addEventListener("change", () => {
-        setGridSize(x, y)    
-    }) */
+    function getSize() {
+        x = dataUser.gridSize[selectGridSize.value].x;
+        y = dataUser.gridSize[selectGridSize.value].y;
+    };   */
 
-    element.append(gridSizeSelect);
+    selectGridSize.addEventListener("change", () => {
+        //getSize(); 
+        setGridSize(selectGridSize)
+    })
 
-
-
-    /*var selectPair = document.getElementById('pair');
-
-     function getValuePair() {
-        let a = (selectPair.value);
-        console.log(a);
-        return a;   
-    };
-    
-    function calcViscosityPair(event) {
-        let valuePair = getValuePair();
-        let const100 = pairsVisc[valuePair][100];
-        let const40 = pairsVisc[valuePair][40];
-        return [const100, const40];
-    };
-    
-    selectPair.addEventListener('change', calcViscosityPair) */
-
-/*  
+     
 
     const gridPointsToWinSelect = document.createElement("select");
-    gridPointsToWinSelect.append("Grid Size");
+    gridPointsToWinSelect.id = "gridPointsToWinSelect";
 
-    gridPointsToWinSelect.addEventListener("click", () => {
-        gridSize();    
-    })
+    //перебор ассоциативного массива, pointstoWin
+    for (var key in dataUser.pointsToWin) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = dataUser.pointsToWin[key];
+
+        gridPointsToWinSelect.append(option);
+    };
 
     element.append(gridPointsToWinSelect);
+    const selectPointsToWin = document.querySelector("#gridPointsToWinSelect");
+
+    selectPointsToWin.addEventListener("change", () => {
+        setPointsToWin(selectPointsToWin);
+    }) 
 
     const gridMaxMissesSelect = document.createElement("select");
-    gridMaxMissesSelect.append("Grid Size");
+    gridMaxMissesSelect.id = 'gridMaxMissesSelect'
 
-    gridMaxMissesSelect.addEventListener("click", () => {
-        gridSize();    
-    })
+    //перебор ассоциативного массива, pointstoWin
+    for (var key in dataUser.pointsToLose) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = `${dataUser.pointsToLose[key]}`;
 
-    element.append(gridMaxMissesSelect); */
+        gridMaxMissesSelect.append(option);
+    };
 
-    
+    element.append(gridMaxMissesSelect);
+    const selectMaxMisses = document.querySelector("#gridMaxMissesSelect");
+
+    selectMaxMisses.addEventListener("change", () => {
+        setMaxMisses(selectMaxMisses);
+    }) 
 
     return element;
 }

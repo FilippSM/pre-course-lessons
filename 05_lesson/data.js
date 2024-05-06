@@ -24,10 +24,18 @@ export const dataUser = {
             y: 8
         }, 
     },
-    pointsToWin: 5,
-    pointsToLose: 20
+    pointsToWin: {
+        win5: 5, 
+        win10: 10, 
+        win15: 15 
+    },
+    pointsToLose: {
+        lose3: 3, 
+        lose5: 5, 
+        lose10: 10, 
+        lose15: 15
+    },    
 }
-
 
 const _data = {
     gameState: GAME_STATES.SETTINGS,
@@ -37,7 +45,7 @@ const _data = {
             y: 4
         },
         pointsToWin: 5,
-        pointsToLose: 20
+        pointsToLose: 3
     },
     catch: 0,
     miss: 0,
@@ -60,7 +68,7 @@ const _data = {
 let observer = () => {};
 
 function changeGoogleCoords() {
-    let randomObject = getRandomInt(_data.settings.gridSize.x - 1);
+    let randomObject = createRandomInt(_data.settings.gridSize.x - 1);
  
     _data.heroes.google.x = randomObject.x;
     _data.heroes.google.y = randomObject.y;
@@ -77,7 +85,7 @@ function changeGoogleCoords() {
  */
 let previousPair = { x: null, y: null };
 
-function getRandomInt(max) {
+function createRandomInt(max) {
     let x, y;
 
     do {
@@ -107,9 +115,8 @@ function runGoogleJump() {
             _data.gameState = GAME_STATES.LOSE;
         }
         observer(); //когда поменял позицию вызываем гугл
-    }, 3000);    
+    }, 1000);    
 }
-
 
 //setter/muration/command
 //сеттер - ввод данных пользователем с предварительной проверкой
@@ -118,22 +125,54 @@ export function addEventListener(subscriber) {
     observer = subscriber;
 }
 
-export function setGridSize(x, y){
+export function setGridSize(selectGridSize){
+    const x = dataUser.gridSize[selectGridSize.value].x;
+    const y = dataUser.gridSize[selectGridSize.value].y;
+
+
     if (x < 1) throw new Error("incorrect X grid size settings");
     if (y < 1) throw new Error("incorrect Y grid size settings");
     _data.settings.gridSize.x = x;
     _data.settings.gridSize.y = y;
 }
 
+export function setPointsToWin(x){
+    x = dataUser.pointsToWin[x.value];
+
+    console.log(x);
+
+    if (x < 1) throw new Error("incorrect X points to win settings");
+    _data.settings.pointsToWin = x;
+}
+
+export function setMaxMisses(x){
+    x = dataUser.pointsToLose[x.value];
+    
+    console.log(x);
+
+    if (x < 1) throw new Error("incorrect X max misses settings");
+    _data.settings.pointsToLose = x;
+}
+
 export function start() {
+    //защита от старта уже запущенной игры
+    if (_data.gameState !== GAME_STATES.IN.SETTINGS) {
+        throw new Error("Game cannot be started from state: " + _data.gameState);    
+    }
+
     _data.gameState = GAME_STATES.IN_PROGRESS;
     runGoogleJump();
     observer();
 }
 
+//сброс настроек заданных при новой игре
 export function playAgain() {
     _data.miss = 0;
     _data.catch = 0;
+    _data.settings.gridSize = dataUser.gridSize.size4;
+    _data.settings.pointsToWin = dataUser.pointsToWin.win5;
+    _data.settings.pointsToLose = dataUser.pointsToLose.lose3;
+
     _data.gameState = GAME_STATES.SETTINGS;
     observer();
 }
