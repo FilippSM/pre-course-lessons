@@ -1,4 +1,4 @@
-import { playAgain } from "../../data.js";
+import { playAgain } from "../../../data.js";
 
 
 export function Lose() {

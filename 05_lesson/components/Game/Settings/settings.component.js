@@ -1,4 +1,4 @@
-import { dataUser, setGridSize, setMaxMisses, setPointsToWin, start } from "../../data.js";
+import { dataUser, setGridSize, setMaxMisses, setPointsToWin, start } from "../../../data.js";
 
 export function Settings() {
     const elementRoot = document.getElementById("root");
@@ -32,21 +32,11 @@ export function Settings() {
     element.append(gridSizeSelect);
     const selectGridSize = document.querySelector("#gridSizeSelect");
 
- /*    let x;
-    let y;
-
-
-    function getSize() {
-        x = dataUser.gridSize[selectGridSize.value].x;
-        y = dataUser.gridSize[selectGridSize.value].y;
-    };   */
-
     selectGridSize.addEventListener("change", () => {
-        //getSize(); 
         setGridSize(selectGridSize)
     })
 
-     
+
 
     const gridPointsToWinSelect = document.createElement("select");
     gridPointsToWinSelect.id = "gridPointsToWinSelect";
@@ -65,7 +55,7 @@ export function Settings() {
 
     selectPointsToWin.addEventListener("change", () => {
         setPointsToWin(selectPointsToWin);
-    }) 
+    })
 
     const gridMaxMissesSelect = document.createElement("select");
     gridMaxMissesSelect.id = 'gridMaxMissesSelect'
@@ -84,7 +74,7 @@ export function Settings() {
 
     selectMaxMisses.addEventListener("change", () => {
         setMaxMisses(selectMaxMisses);
-    }) 
+    })
 
     return element;
 }

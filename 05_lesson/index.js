@@ -1,9 +1,5 @@
-import { GameGrid } from "./components/GameGrid/game-grid.component.js"
-import { Lose } from "./components/Lose/lose.component.js";
-import { ResultPanel } from "./components/ResultPanel/result-panel.component.js"
-import { Settings } from "./components/Settings/settings.component.js";
-import { Win } from "./components/Win/win.component.js";
-import { addEventListener, getGameState, GAME_STATES } from "./data.js";
+import { Game } from "./components/Game/game.component.js";
+import { addEventListener } from "./data.js";
 
 
 
@@ -11,27 +7,11 @@ import { addEventListener, getGameState, GAME_STATES } from "./data.js";
 export function rerender() {
     const rootElement = document.getElementById("root");
 
-    rootElement.innerHTML = " "; //очистка перед append чтобы не наслаивалось приложение
+    rootElement.innerHTML = ""; //очистка перед append чтобы не наслаивалось приложение
 
-    const gameState = getGameState();
-
-    switch (gameState) {
-        case GAME_STATES.IN_PROGRESS:
-            rootElement.append(ResultPanel(), GameGrid());
-            break;
-        case GAME_STATES.SETTINGS:
-            rootElement.append(Settings());
-            break;
-        case GAME_STATES.WIN:
-            rootElement.append(Win());
-            break;
-        case GAME_STATES.LOSE:
-            rootElement.append(Lose());
-            break;
-        default: {
-            throw new Error("Not supported state")
-        }
-    }
+    const game = Game();
+    rootElement.append(game);
+    
 }
 rerender()
 
