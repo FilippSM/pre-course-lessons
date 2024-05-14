@@ -20,6 +20,10 @@ export const MOVING_DIRECTIONS = {
 
 export const dataUser = {
     gridSize: {
+        size3: { 
+            x: 3, 
+            y: 3
+        }, 
         size4: { 
             x: 4, 
             y: 4
@@ -46,16 +50,25 @@ export const dataUser = {
     },    
 }
 
+/**
+ * управление с клавиатуры или голосом
+ */
+export const SELECT_MANAGEMENT = {
+    KEYBOARD: "keyboard",
+    VOICE: "voice",
+};
+
+
 const _data = {
     gameState: GAME_STATES.SETTINGS,
     settings: {
         gridSize: {
-            x: 4,
-            y: 4
+            x: 3,
+            y: 3
         },
         pointsToWin: 5,
         pointsToLose: 3,
-        googleJumpInterval: 4000
+        googleJumpInterval: 1000
     },
     catch: {
         player1: 0,
@@ -108,7 +121,7 @@ function _changeGoogleCoords() {
 
     } while ( newCoordsMatchWithPlayer1Coords || newCoordsMatchWithPlayer2Coords) //true
 
-    _data.heroes.google.x =  newX;
+    _data.heroes.google.x = newX;
     _data.heroes.google.y = newY;
 
 
@@ -156,6 +169,58 @@ function _runGoogleJump() {
         }
         _observer(); //когда поменял позицию вызываем гугл
     }, _data.settings.googleJumpInterval);    
+}
+
+/**
+ * счетчик пойманных кликов по гуглу
+ */
+function _catchGoogle(playerNumber) {
+    _stopGoogleJump();
+
+    //защита от дурака на повторный клик (более кол-ва очков: pointsToWin)
+    //при _data.catch ===pointsToWin будет остановка
+
+ 
+    _data.catch[`player${playerNumber}`]++;
+
+    if (_data.catch[`player${playerNumber}`] === _data.settings.pointsToWin) {
+        _data.gameState = GAME_STATES.WIN;
+    } else {
+        _changeGoogleCoords()
+        _runGoogleJump();
+    }
+
+    _observer(); //когда поменял позицию вызываем гугл
+}
+
+/**
+ * Проверка на валидность координат, координаты не меньше нуля и меньше размера сетки
+ */
+function _checkIsCoordInValidRange(coords) {
+    const xIsCorrect = coords.x >= 0 && coords.x < _data.settings.gridSize.x;
+    const yIsCorrect = coords.y >= 0 && coords.y < _data.settings.gridSize.y;
+
+    return xIsCorrect && yIsCorrect
+}
+
+/**
+ * проверка на наличие в ячейке другога игрока
+ */
+function _coordsMatchWithOtherPlayer(coords) {
+    const player1IsThisCell = coords.x === _data.heroes.player1.x && coords.y === _data.heroes.player1.y;
+    const player2IsThisCell = coords.x === _data.heroes.player2.x && coords.y === _data.heroes.player2.y;
+
+
+    return player1IsThisCell || player2IsThisCell
+}
+
+/**
+ * проверка координат на совпадение с гуглом, если совпадает срабатывает catchgoogle
+ */
+function _coordsMatchWithGoogle(coords) {
+    const googleIsInThisCell = coords.x === _data.heroes.google.x && coords.y === _data.heroes.google.y;
+    
+    return googleIsInThisCell;
 }
 
 //setter/muration/command
@@ -208,8 +273,9 @@ export function start() {
 //сброс настроек заданных при новой игре
 export function playAgain() {
     _data.miss = 0;
-    _data.catch = 0;
-    _data.settings.gridSize = dataUser.gridSize.size4;
+    _data.catch.player1 = 0;
+    _data.catch.player2 = 0;
+    _data.settings.gridSize = dataUser.gridSize.size3;
     _data.settings.pointsToWin = dataUser.pointsToWin.win5;
     _data.settings.pointsToLose = dataUser.pointsToLose.lose3;
 
@@ -217,62 +283,14 @@ export function playAgain() {
     _observer();
 }
 
-/**
- * счетчик пойманных кликов по гуглу
- */
-function catchGoogle(playerNumber) {
-    _stopGoogleJump();
-
-    //защита от дурака на повторный клик (более кол-ва очков: pointsToWin)
-    //при _data.catch ===pointsToWin будет остановка
-
- 
-    _data.catch[`player${playerNumber}`]++;
-
-    if (_data.catch[`player${playerNumber}`] === _data.settings.pointsToWin) {
-        _data.gameState = GAME_STATES.WIN;
-    } else {
-        _changeGoogleCoords()
-        _runGoogleJump();
-    }
-
-    _observer(); //когда поменял позицию вызываем гугл
-}
-
-/**
- * Проверка на валидность координат
- */
-function _checkIsCoordInValidRange(coords) {
-    const xIsCorrect = coords.x >= 0 && coords.x < _data.settings.gridSize.x;
-    const yIsCorrect = coords.y >= 0 && coords.x < _data.settings.gridSize.y;
-
-    return xIsCorrect && yIsCorrect
-}
-
-/**
- * проверка на наличие в ячейке другога игрока
- */
-function _coordsMatchWithOtherPlayer(coords) {
-    const player1IsThisCell = coords.x === _data.heroes.player1.x && coords.y === _data.heroes.player1.y;
-    const player2IsThisCell = coords.x === _data.heroes.player2.x && coords.y === _data.heroes.player2.y;
 
 
-    return player1IsThisCell || player2IsThisCell
-}
-
-/**
- * проверка координат на совпадение с гуглом, если совпадает срабатывает catchgoogle
- */
-function _coordsMatchWithGoogle(coords) {
-    const googleIsInThisCell = coords.x === _data.heroes.google.x && coords.y === _data.heroes.google.y;
-    
-    return googleIsInThisCell;
-}
 
 
 export function movePlayer(playerNumber, direction) {
     validatePlayerNumberOrThrow(playerNumber);
 
+    //защита от нажатия при запущенной игре
     if (_data.gameState !== GAME_STATES.IN_PROGRESS) {
         return;
     }
@@ -307,7 +325,7 @@ export function movePlayer(playerNumber, direction) {
 
     const isMatchWithGoogle = _coordsMatchWithGoogle(newCoords)
     if (isMatchWithGoogle) {
-        catchGoogle(playerNumber)
+        _catchGoogle(playerNumber)
     };
 
     _data.heroes[`player${playerNumber}`] = newCoords;
