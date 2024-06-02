@@ -1,23 +1,33 @@
 import { Game } from "./components/Game/game.component.js";
-import { addEventListener } from "./data.js";
+import { EVENTS, subscribe, unsubscribe } from "./data.js";
 
 
 
 //надо ререндериться всякий раз когда поменялись данные
-export function rerender() {
-    const rootElement = document.getElementById("root");
+export function rerender(e) {
 
-    rootElement.innerHTML = ""; //очистка перед append чтобы не наслаивалось приложение
+    //условие чтобы перересоавки не было каждыйраз
 
-    const game = Game();
-    rootElement.append(game);
-    
+    if (e.name === EVENTS.STATUS_CHANGED) {
+        console.log("RERENDER");
+        const rootElement = document.getElementById("root");
+
+        rootElement.innerHTML = ""; //очистка перед append чтобы не наслаивалось приложение
+
+        const game = Game();
+        rootElement.append(game);
+    }
 }
-rerender()
-
+rerender({name: EVENTS.STATUS_CHANGED})
 
 //каждый раз когда что-то меняется происходит ререндер
-addEventListener(rerender);
+subscribe(rerender);
 
+
+const subscriber = (e) => {
+    console.log(e);
+}
+
+subscribe(subscriber);
 
 

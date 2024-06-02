@@ -2,6 +2,16 @@
 /**
  * State mashine (конечная машина)
  */
+
+export const EVENTS = {
+    GOOGLE_JUMPED: 'GOOGLE_JUMPED',
+    PLAYER1_MOVED: 'PLAYER1_MOVED',
+    PLAYER2_MOVED: 'PLAYER2_MOVED',
+    STATUS_CHANGED: 'STATUS_CHANGED',
+    SCORES_CHANGED: 'SCORES_CHANGED',
+    RESET_PLAYER_COORDS: 'RESET_PLAYER_COORDS',
+}
+
 export const GAME_STATES = {
     SETTINGS: "settings",
     IN_PROGRESS: "in_progress",
@@ -90,8 +100,19 @@ const _data = {
 мы в дату на прямую не лезем, пользователи взаимодействуют с данными через
 прослойку геттеров и сеттеров */
 
+let _subscribers = [];
 
-let _observer = () => {};
+function _notify(eventName) {
+    _subscribers.forEach((s) => {
+        try {
+            const event = {name: eventName}
+            s(event)
+        } catch(error) {
+            console.error(error);
+        }
+    })
+}
+
 
 /* function changeGoogleCoords() {
     let randomObject = _getRandomInt(_data.settings.gridSize.x - 1);
@@ -116,10 +137,11 @@ function _changeGoogleCoords() {
         newX = randomObject.x;
         newY = randomObject.y;
 
+        var newCoordsMatchWithPrevCoords = newX === _data.heroes.google.x && newY === _data.heroes.google.y;
         var newCoordsMatchWithPlayer1Coords = newX === _data.heroes.player1.x && newY === _data.heroes.player1.y;
         var newCoordsMatchWithPlayer2Coords = newX === _data.heroes.player2.x && newY === _data.heroes.player2.y;
 
-    } while ( newCoordsMatchWithPlayer1Coords || newCoordsMatchWithPlayer2Coords) //true
+    } while ( newCoordsMatchWithPrevCoords || newCoordsMatchWithPlayer1Coords || newCoordsMatchWithPlayer2Coords) //true
 
     _data.heroes.google.x = newX;
     _data.heroes.google.y = newY;
@@ -161,13 +183,16 @@ function _stopGoogleJump() {
 function _runGoogleJump() {
     jumpIntervalId = setInterval(() => {
         _changeGoogleCoords(); // изменение координат
+        _notify(EVENTS.GOOGLE_JUMPED);
         _data.miss++;
+        _notify(EVENTS.SCORES_CHANGED);
         //состояние state mashine при проигрыше
         if(_data.miss === _data.settings.pointsToLose) {
             _stopGoogleJump();
             _data.gameState = GAME_STATES.LOSE;
+            _notify(EVENTS.STATUS_CHANGED);
         }
-        _observer(); //когда поменял позицию вызываем гугл
+
     }, _data.settings.googleJumpInterval);    
 }
 
@@ -182,15 +207,17 @@ function _catchGoogle(playerNumber) {
 
  
     _data.catch[`player${playerNumber}`]++;
+    _notify(EVENTS.STATUS_CHANGED);
+
 
     if (_data.catch[`player${playerNumber}`] === _data.settings.pointsToWin) {
         _data.gameState = GAME_STATES.WIN;
+        _notify(EVENTS.STATUS_CHANGED);
     } else {
-        _changeGoogleCoords()
+        _changeGoogleCoords();
+        _notify(EVENTS.GOOGLE_JUMPED);
         _runGoogleJump();
     }
-
-    _observer(); //когда поменял позицию вызываем гугл
 }
 
 /**
@@ -226,8 +253,12 @@ function _coordsMatchWithGoogle(coords) {
 //setter/muration/command
 //сеттер - ввод данных пользователем с предварительной проверкой
 
-export function addEventListener(subscriber) {
-    _observer = subscriber;
+//каждый раз когда подписываемся мы пушим в массив нового сабскрайбера
+export function subscribe(subscriber) {
+    _subscribers.push(subscriber);
+}
+export function unsubscribe(subscriber) {
+    _subscribers = _subscribers.filter(s => s !== subscriber);
 }
 
 export function setGridSize(selectGridSize){
@@ -266,8 +297,8 @@ export function start() {
     }
 
     _data.gameState = GAME_STATES.IN_PROGRESS;
+    _notify(EVENTS.STATUS_CHANGED);
     _runGoogleJump();
-    _observer();
 }
 
 //сброс настроек заданных при новой игре
@@ -278,9 +309,9 @@ export function playAgain() {
     _data.settings.gridSize = dataUser.gridSize.size3;
     _data.settings.pointsToWin = dataUser.pointsToWin.win5;
     _data.settings.pointsToLose = dataUser.pointsToLose.lose3;
-
+    _notify(EVENTS.SCORES_CHANGED);
     _data.gameState = GAME_STATES.SETTINGS;
-    _observer();
+    _notify(EVENTS.STATUS_CHANGED);
 }
 
 
@@ -330,7 +361,7 @@ export function movePlayer(playerNumber, direction) {
 
     _data.heroes[`player${playerNumber}`] = newCoords;
 
-    _observer();
+    _notify(EVENTS[`PLAYER${playerNumber}_MOVED`])
 }
 
 //getter/selector/query/adapter
