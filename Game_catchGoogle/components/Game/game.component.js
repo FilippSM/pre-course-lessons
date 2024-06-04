@@ -159,7 +159,9 @@ export function Game() {
 
     switch (gameState) {
         case GAME_STATES.IN_PROGRESS:
-            element.append(ResultPanel(), GameGrid());
+            const resultPanelWrapper = ResultPanel();
+           // resultPanelWrapper.cleanup();
+            element.append(resultPanelWrapper.element, GameGrid())
             break;
         case GAME_STATES.SETTINGS:
             element.append(setSelectPlayer(), Settings());
@@ -175,5 +177,5 @@ export function Game() {
         }
     }
 
-   return element;
+   return {element, cleanup: () => {}};
 }

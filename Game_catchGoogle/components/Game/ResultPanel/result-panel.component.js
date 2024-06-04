@@ -20,5 +20,5 @@ export function ResultPanel() {
 
     render()
 
-    return element;
+    return {element, cleanup: () => {}};
 }

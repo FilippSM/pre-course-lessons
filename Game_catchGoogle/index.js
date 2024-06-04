@@ -14,8 +14,9 @@ export function rerender(e) {
 
         rootElement.innerHTML = ""; //очистка перед append чтобы не наслаивалось приложение
 
-        const game = Game();
-        rootElement.append(game);
+        const gameWrapper = Game();
+
+        rootElement.append(gameWrapper.element);
     }
 }
 rerender({name: EVENTS.STATUS_CHANGED})
