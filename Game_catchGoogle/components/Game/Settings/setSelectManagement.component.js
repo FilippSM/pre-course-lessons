@@ -1,4 +1,4 @@
-import { SELECT_MANAGEMENT } from "../../../data.js";
+import { SELECT_MANAGEMENT } from "../../../data.proxy.js";
 import { setControlMethod } from "../game.component.js";
 
 

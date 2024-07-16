@@ -1,4 +1,4 @@
-import { GAME_STATES, MOVING_DIRECTIONS, SELECT_MANAGEMENT, getGameState, movePlayer } from "../../data.js";
+import { GAME_STATES, MOVING_DIRECTIONS, SELECT_MANAGEMENT, getGameState, movePlayer } from "../../data.proxy.js";
 import { ResultPanel } from "./ResultPanel/result-panel.component.js";
 import { Settings } from "./Settings/settings.component.js";
 import { Win } from "./Win/win.component.js";
@@ -152,16 +152,17 @@ recognition.onerror = (event) => {
 // Start recognition
 recognition.start();
 
-export function Game() {
+export async function Game() {
     const element = document.createElement("div");
 
-    const gameState = getGameState();
+    const gameState = await getGameState();
 
     switch (gameState) {
         case GAME_STATES.IN_PROGRESS:
             const resultPanelWrapper = ResultPanel();
            // resultPanelWrapper.cleanup();
-            element.append(resultPanelWrapper.element, GameGrid())
+            const gameGrid = await GameGrid();   
+            element.append(resultPanelWrapper.element, gameGrid)
             break;
         case GAME_STATES.SETTINGS:
             element.append(setSelectPlayer(), Settings());

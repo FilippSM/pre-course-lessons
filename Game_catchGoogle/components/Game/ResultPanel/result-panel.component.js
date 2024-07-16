@@ -1,10 +1,14 @@
-import { EVENTS, getCatchCount, getMissCount, subscribe } from "../../../data.js";
+import { EVENTS, getCatchCount, getMissCount, subscribe } from "../../../data.proxy.js";
 
 export function ResultPanel() {
 
-    function render() {
+    async function render() {
+        const catchCount = await getCatchCount();
+        const missCount = await getMissCount();
+
+
         element.innerHTML = "";
-        element.append(`PLAYER1: ${getCatchCount().player1}, PLAYER2: ${getCatchCount().player2}, MISS: ${getMissCount()}`);
+        element.append(`PLAYER1: ${catchCount.player1}, PLAYER2: ${catchCount.player2}, MISS: ${missCount}`);
     }
 
 

@@ -77,8 +77,8 @@ const _data = {
             y: 3
         },
         pointsToWin: 5,
-        pointsToLose: 3,
-        googleJumpInterval: 1000
+        pointsToLose: 5,
+        googleJumpInterval: 2000
     },
     catch: {
         player1: 0,

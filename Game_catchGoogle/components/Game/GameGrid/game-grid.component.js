@@ -1,11 +1,11 @@
-import { getGoogleCoords, getGridSizeSettings, getPlayer1Coords, getPlayer2Coords} from "../../../data.js";
+import { getGridSizeSettings} from "../../../data.proxy.js";
 import { Cell } from "./Cell/Cell.js";
 
 
-export function GameGrid() {
+export async function GameGrid() {
     const gridElement = document.createElement("table");
 
-    const gridSize = getGridSizeSettings();
+    const gridSize = await getGridSizeSettings();
 
 
 

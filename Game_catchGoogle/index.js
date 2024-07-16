@@ -1,10 +1,10 @@
 import { Game } from "./components/Game/game.component.js";
-import { EVENTS, subscribe, unsubscribe } from "./data.js";
+import { EVENTS, subscribe, unsubscribe } from "./data.proxy.js";
 
 
 
 //надо ререндериться всякий раз когда поменялись данные
-export function rerender(e) {
+export async function rerender(e) {
 
     //условие чтобы перересоавки не было каждыйраз
 
@@ -14,7 +14,7 @@ export function rerender(e) {
 
         rootElement.innerHTML = ""; //очистка перед append чтобы не наслаивалось приложение
 
-        const gameWrapper = Game();
+        const gameWrapper = await Game();
 
         rootElement.append(gameWrapper.element);
     }

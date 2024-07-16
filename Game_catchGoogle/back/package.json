@@ -1,0 +1,21 @@
+{
+  "name": "google-back",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "cath google",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "google"
+  ],
+  "author": "samfill",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.3"
+  }
+}

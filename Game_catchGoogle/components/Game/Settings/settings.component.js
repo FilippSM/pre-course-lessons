@@ -1,4 +1,4 @@
-import { dataUser, setGridSize, setMaxMisses, setPointsToWin, start } from "../../../data.js";
+import { dataUser, setGridSize, setMaxMisses, setPointsToWin, start } from "../../../data.proxy.js";
 
 export function Settings() {
     const elementRoot = document.getElementById("root");
@@ -60,7 +60,7 @@ export function Settings() {
     const gridMaxMissesSelect = document.createElement("select");
     gridMaxMissesSelect.id = 'gridMaxMissesSelect'
 
-    //перебор ассоциативного массива, pointstoWin
+    //перебор ассоциативного массива, pointsToLose
     for (var key in dataUser.pointsToLose) {
         const option = document.createElement('option');
         option.value = key;
